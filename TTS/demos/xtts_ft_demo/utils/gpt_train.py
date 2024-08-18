@@ -7,7 +7,7 @@ from TTS.config.shared_configs import BaseDatasetConfig
 from TTS.tts.datasets import load_tts_samples
 from TTS.tts.layers.xtts.trainer.gpt_trainer import GPTArgs, GPTTrainer, GPTTrainerConfig, XttsAudioConfig
 from TTS.utils.manage import ModelManager
-
+from huggingface_hub import snapshot_download
 
 def train_gpt(language, num_epochs, batch_size, grad_acumm, train_csv, eval_csv, output_path, max_audio_length=255995):
     #  Logging parameters
@@ -57,20 +57,22 @@ def train_gpt(language, num_epochs, batch_size, grad_acumm, train_csv, eval_csv,
         print(" > Downloading DVAE files!")
         ModelManager._download_model_files([MEL_NORM_LINK, DVAE_CHECKPOINT_LINK], CHECKPOINTS_OUT_PATH, progress_bar=True)
 
-
+    snapshot_download(repo_id="capleaf/viXTTS",
+                    repo_type="model",
+                    local_dir="model")
     # Download XTTS v2.0 checkpoint if needed
-    TOKENIZER_FILE_LINK = "https://coqui.gateway.scarf.sh/hf-coqui/XTTS-v2/main/vocab.json"
-    XTTS_CHECKPOINT_LINK = "https://coqui.gateway.scarf.sh/hf-coqui/XTTS-v2/main/model.pth"
-    XTTS_CONFIG_LINK = "https://coqui.gateway.scarf.sh/hf-coqui/XTTS-v2/main/config.json"
+    # TOKENIZER_FILE_LINK = "https://coqui.gateway.scarf.sh/hf-coqui/XTTS-v2/main/vocab.json"
+    # XTTS_CHECKPOINT_LINK = "https://coqui.gateway.scarf.sh/hf-coqui/XTTS-v2/main/model.pth"
+    # XTTS_CONFIG_LINK = "https://coqui.gateway.scarf.sh/hf-coqui/XTTS-v2/main/config.json"
 
-    # XTTS transfer learning parameters: You we need to provide the paths of XTTS model checkpoint that you want to do the fine tuning.
+    # # XTTS transfer learning parameters: You we need to provide the paths of XTTS model checkpoint that you want to do the fine tuning.
     # TOKENIZER_FILE = os.path.join(CHECKPOINTS_OUT_PATH, os.path.basename(TOKENIZER_FILE_LINK))  # vocab.json file
     # XTTS_CHECKPOINT = os.path.join(CHECKPOINTS_OUT_PATH, os.path.basename(XTTS_CHECKPOINT_LINK))  # model.pth file
     # XTTS_CONFIG_FILE = os.path.join(CHECKPOINTS_OUT_PATH, os.path.basename(XTTS_CONFIG_LINK))  # config.json file
     
-    TOKENIZER_FILE = "/home/thtai/thtai/vivoice_model/model/vocab.json"  # vocab.json file
-    XTTS_CHECKPOINT = "/home/thtai/thtai/vivoice_model/model/model.pth"  # model.pth file
-    XTTS_CONFIG_FILE = "/home/thtai/thtai/vivoice_model/model/config.json"  # config.json file
+    TOKENIZER_FILE = "model/vocab.json"  # vocab.json file
+    XTTS_CHECKPOINT = "model/model.pth"  # model.pth file
+    XTTS_CONFIG_FILE = "model/config.json"  # config.json file
 
     # download XTTS v2.0 files if needed
     if not os.path.isfile(TOKENIZER_FILE) or not os.path.isfile(XTTS_CHECKPOINT):
