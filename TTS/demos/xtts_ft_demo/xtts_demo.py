@@ -173,7 +173,7 @@ if __name__ == "__main__":
             )
             lang = gr.Dropdown(
                 label="Dataset Language",
-                value="en",
+                value="vi",
                 choices=[
                     "en",
                     "es",
@@ -325,7 +325,7 @@ if __name__ == "__main__":
                     )
                     tts_language = gr.Dropdown(
                         label="Language",
-                        value="en",
+                        value= "vi",
                         choices=[
                             "en",
                             "es",
@@ -343,6 +343,7 @@ if __name__ == "__main__":
                             "hu",
                             "ko",
                             "ja",
+                            "vi"
                         ]
                     )
                     tts_text = gr.Textbox(
