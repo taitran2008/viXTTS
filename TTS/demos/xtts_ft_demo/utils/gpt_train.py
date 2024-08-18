@@ -51,15 +51,18 @@ def train_gpt(language, num_epochs, batch_size, grad_acumm, train_csv, eval_csv,
     # Set the path to the downloaded files
     DVAE_CHECKPOINT = os.path.join(CHECKPOINTS_OUT_PATH, os.path.basename(DVAE_CHECKPOINT_LINK))
     MEL_NORM_FILE = os.path.join(CHECKPOINTS_OUT_PATH, os.path.basename(MEL_NORM_LINK))
-
+    model_dir=os.path.join(CHECKPOINTS_OUT_PATH, "model") 
+    os.makedirs(model_dir, exist_ok=True)
+    snapshot_download(repo_id="capleaf/viXTTS",
+                    repo_type="model",
+                    local_dir=model_dir)
     # download DVAE files if needed
     if not os.path.isfile(DVAE_CHECKPOINT) or not os.path.isfile(MEL_NORM_FILE):
         print(" > Downloading DVAE files!")
         ModelManager._download_model_files([MEL_NORM_LINK, DVAE_CHECKPOINT_LINK], CHECKPOINTS_OUT_PATH, progress_bar=True)
 
-    snapshot_download(repo_id="capleaf/viXTTS",
-                    repo_type="model",
-                    local_dir="model")
+    # Download XTTS v2.0 checkpoint if needed
+   
     # Download XTTS v2.0 checkpoint if needed
     # TOKENIZER_FILE_LINK = "https://coqui.gateway.scarf.sh/hf-coqui/XTTS-v2/main/vocab.json"
     # XTTS_CHECKPOINT_LINK = "https://coqui.gateway.scarf.sh/hf-coqui/XTTS-v2/main/model.pth"
@@ -70,16 +73,15 @@ def train_gpt(language, num_epochs, batch_size, grad_acumm, train_csv, eval_csv,
     # XTTS_CHECKPOINT = os.path.join(CHECKPOINTS_OUT_PATH, os.path.basename(XTTS_CHECKPOINT_LINK))  # model.pth file
     # XTTS_CONFIG_FILE = os.path.join(CHECKPOINTS_OUT_PATH, os.path.basename(XTTS_CONFIG_LINK))  # config.json file
     
-    TOKENIZER_FILE = "model/vocab.json"  # vocab.json file
-    XTTS_CHECKPOINT = "model/model.pth"  # model.pth file
-    XTTS_CONFIG_FILE = "model/config.json"  # config.json file
-
+    TOKENIZER_FILE = os.path.join(model_dir, "vocab.json")
+    XTTS_CHECKPOINT = os.path.join(model_dir, "model.pth")
+    XTTS_CONFIG_FILE = os.path.join(model_dir, "config.json")
     # download XTTS v2.0 files if needed
-    if not os.path.isfile(TOKENIZER_FILE) or not os.path.isfile(XTTS_CHECKPOINT):
-        print(" > Downloading XTTS v2.0 files!")
-        ModelManager._download_model_files(
-            [TOKENIZER_FILE_LINK, XTTS_CHECKPOINT_LINK, XTTS_CONFIG_LINK], CHECKPOINTS_OUT_PATH, progress_bar=True
-        )
+    # if not os.path.isfile(TOKENIZER_FILE) or not os.path.isfile(XTTS_CHECKPOINT):
+    #     print(" > Downloading XTTS v2.0 files!")
+    #     ModelManager._download_model_files(
+    #         [TOKENIZER_FILE_LINK, XTTS_CHECKPOINT_LINK, XTTS_CONFIG_LINK], CHECKPOINTS_OUT_PATH, progress_bar=True
+    #     )
 
     # init args and config
     model_args = GPTArgs(
